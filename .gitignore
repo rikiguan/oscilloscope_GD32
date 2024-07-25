@@ -1,0 +1,116 @@
+# Keil project files
+*.uvoptx
+*.uvguix
+*.uvopt
+*.uvgui
+
+# Keil output files
+*.axf
+*.crf
+*.d
+*.dep
+*.hex
+*.ini
+*.lnp
+*.lnp2
+*.map
+*.plg
+*.uvproj.bak
+*.uvguix.*
+*.uvprojx.bak
+*.o
+*.sct
+
+# Build directories
+Project/Build
+Project/Objects
+Project/Output
+
+# Other unwanted files
+*.log
+*.bak
+*.tmp
+*.swp
+*~.ncb
+*.suo
+*.user
+*.rsuser
+*.sdf
+*.opensdf
+*.pch
+*.idb
+*.pdb
+*.sbr
+*.aps
+*.ilk
+*.scc
+*.ncb
+*.opt
+*.plg
+*.exe
+*.lib
+*.idb
+*.pdb
+*.exp
+*.ipch
+*.tlog
+*.log
+*.lst
+*.list
+*.tmp
+
+# Keil specific temporary files
+*.lst
+*.lis
+*.crf
+
+# Ignore configuration directories
+/.settings
+.vscode/
+.idea/
+
+# Ignore dependency files
+*.d
+
+# Ignore object files
+*.o
+*.obj
+
+# Ignore library files
+*.lib
+*.a
+
+# Ignore executable files
+*.exe
+
+# Ignore compiled binary files
+*.bin
+
+# Ignore firmware files
+*.hex
+*.out
+
+# Ignore map files
+*.map
+
+# Ignore linker files
+*.ld
+*.lds
+
+# Ignore precompiled headers
+*.gch
+*.pch
+
+# Ignore debugging files
+*.dmp
+
+# Ignore archive files
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.7z
+
+# Other
+.DS_Store
+Thumbs.db
