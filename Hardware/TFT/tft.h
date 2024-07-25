@@ -44,5 +44,5 @@ void TFT_ShowChinese16x16(uint16_t x,uint16_t y,uint8_t *s,uint16_t fc,uint16_t 
 void TFT_ShowChinese24x24(uint16_t x,uint16_t y,uint8_t *s,uint16_t fc,uint16_t bc,uint8_t sizey,uint8_t mode);
 void TFT_StaticUI(void);
 void TFT_ShowUI(volatile const struct Oscilloscope *value);
-
+void TFT_StaticUI_ITEM(void);
 #endif

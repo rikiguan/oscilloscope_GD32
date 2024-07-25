@@ -2,6 +2,9 @@
 #include "timer.h"
 #include "tft.h"
 
+//TODO
+#include "main.h"
+
 static uint8_t keyValue=0;
 static uint8_t key1_state = 0;
 static uint8_t key2_state = 0;
@@ -69,6 +72,8 @@ void Init_EC11_GPIO(void)
 	exti_interrupt_flag_clear(EXTI_4);
 }
 
+extern MENU_OptionTypeDef MENU_OptionList[];
+
 /*
 *   函数内容：按键处理函数
 *   函数参数：无
@@ -114,85 +119,34 @@ void Key_Handle(volatile struct Oscilloscope *value)
             }
             break;
 				 case KEYDPRESS:
-            if((*value).pause == 0)
-            {
-                (*value).pause=1;
-            }
-            else
-            {
-                (*value).pause=0;
-            }
-            break;
+					  if((*value).isSel!=0){
+							MENU_OptionList[(*value).menuSel].funchand(value,KEYDPRESS);
+						}else{
+							MENU_SEL_HANDLER(value,KEYDPRESS);
+						}
+						break;
         case KEYAPRESS:
-            switch((*value).sampletime)
-            {
-                case ADC_SAMPLETIME_239POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_71POINT5;
-                    break;
-                case ADC_SAMPLETIME_71POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_55POINT5;
-                    break;
-                case ADC_SAMPLETIME_55POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_41POINT5;
-                    break;
-                case ADC_SAMPLETIME_41POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_28POINT5;
-                    break;
-                case ADC_SAMPLETIME_28POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_239POINT5;
-                    break;
-                default:
-                    (*value).sampletime=ADC_SAMPLETIME_239POINT5;
-                    break;
-            }
-            //ADC常规通道配置--PA3，顺序组0，通道3，采样时间
-            adc_regular_channel_config(0, ADC_CHANNEL_3, (*value).sampletime);            
-            break;
+						if((*value).isSel!=0){
+							MENU_OptionList[(*value).menuSel].funchand(value,KEYAPRESS);
+						}else{
+							MENU_SEL_HANDLER(value,KEYAPRESS);
+						}
+						break;
         case KEYBPRESS:
-            switch((*value).sampletime)
-            {
-                case ADC_SAMPLETIME_239POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_28POINT5;
-                    break;
-                case ADC_SAMPLETIME_71POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_239POINT5;
-                    break;
-                case ADC_SAMPLETIME_55POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_71POINT5;
-                    break;
-                case ADC_SAMPLETIME_41POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_55POINT5;
-                    break;
-                case ADC_SAMPLETIME_28POINT5:
-                    (*value).sampletime=ADC_SAMPLETIME_41POINT5;
-                    break;
-                default:
-                    (*value).sampletime=ADC_SAMPLETIME_239POINT5;
-                    break;
-            }    
-            //ADC常规通道配置--PA3，顺序组0，通道3，采样时间
-            adc_regular_channel_config(0, ADC_CHANNEL_3, (*value).sampletime);   
-            break;
+						if((*value).isSel!=0){
+							MENU_OptionList[(*value).menuSel].funchand(value,KEYBPRESS);
+						}else{
+							MENU_SEL_HANDLER(value,KEYBPRESS);
+						}
+						break;
 		default:
 			break;
 	}
     (*value).keyValue=0;
-    //参数显示UI
-    TFT_ShowUI(value); 
+ 
 }
 
-//void KEYD_SCAN(volatile struct Oscilloscope *value)
-//{
-//	if(gpio_input_bit_get(GPIOB,GPIO_PIN_9)==RESET)
-//	{
-//		delay_1ms(20);
-//		if(gpio_input_bit_get(GPIOB,GPIO_PIN_9)==RESET)
-//		{
-//			while(gpio_input_bit_get(GPIOB,GPIO_PIN_9)==RESET);
-//			(*value).keyValue = KEYDPRESS;
-//		}
-//	}
-//}
+
 
 void Key_Sacnf(volatile struct Oscilloscope *value)
 {

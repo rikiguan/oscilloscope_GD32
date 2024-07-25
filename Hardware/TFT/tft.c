@@ -500,42 +500,36 @@ void TFT_ShowChinese24x24(uint16_t x,uint16_t y,uint8_t *s,uint16_t fc,uint16_t 
 	}
 } 
 
+
+
+
+void TFT_StaticUI_ITEM(void)
+{
+		
+}
 void TFT_StaticUI(void)
 {
     uint16_t i=0;
     
-    char showData[32]={0};
+//char showData[32]={0};
     
     TFT_ShowChinese(10,0,(uint8_t *)"简易示波器",BLACK,GREEN,16,0);
     
-    sprintf(showData,"  PWM ");
-    TFT_ShowString(110,0,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-    memset(showData,0,32);
-    
-    TFT_ShowChinese(110,20,(uint8_t *)"输出状态",WHITE,PURPLE,12,0);
-    
-    sprintf(showData,"      ");
-    TFT_ShowString(110,36,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-    memset(showData,0,32);
-    
-    TFT_ShowChinese(110,56,(uint8_t *)"输出频率",WHITE,PURPLE,12,0);
-    
-    sprintf(showData,"      ");
-    TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-    memset(showData,0,32);
-    
-    sprintf(showData,"      ");
-    TFT_ShowString(110,92,(uint8_t *)showData,WHITE,PURPLE,12,0);  
-    memset(showData,0,32);
-    TFT_ShowChinese(118,92,(uint8_t *)"占空比",WHITE,PURPLE,12,0);
-    
-    sprintf(showData,"      ");
-    TFT_ShowString(110,106,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-    memset(showData,0,32);
-    
-    TFT_ShowChinese(5,92,(uint8_t *)"输入幅值",WHITE,PURPLE,12,0);
-    
-    TFT_ShowChinese(55,92,(uint8_t *)"输入频率",WHITE,PURPLE,12,0);
+		
+		
+
+		
+//		sprintf(showData,"  PWM ");
+//    TFT_ShowString(110,0,(uint8_t *)showData,BLACK,YELLOW,16,0);  
+//    memset(showData,0,32);
+
+//    TFT_ShowChinese(110,56,(uint8_t *)"输出频率",WHITE,PURPLE,12,0);
+//		TFT_ShowChinese(110,20,(uint8_t *)"输出状态",WHITE,PURPLE,12,0);
+//    TFT_ShowChinese(118,92,(uint8_t *)"占空比",WHITE,PURPLE,12,0);
+//    
+//		
+//    TFT_ShowChinese(5,92,(uint8_t *)"输入幅值",WHITE,PURPLE,12,0);
+//    TFT_ShowChinese(55,92,(uint8_t *)"输入频率",WHITE,PURPLE,12,0);
     
     for(i=0;i<=128;i=i+2)
     {
@@ -554,12 +548,10 @@ void TFT_StaticUI(void)
     {
         TFT_DrawPoint((i*10)+2,82,GREEN); 
         TFT_DrawPoint((i*10)+3,82,GREEN); 
-    }
-    for(i=0;i<10;i++)
-    {
-        TFT_DrawPoint((i*10)+2,83,GREEN); 
+				TFT_DrawPoint((i*10)+2,83,GREEN); 
         TFT_DrawPoint((i*10)+3,83,GREEN);
     }
+
 }
 
 /*
@@ -574,19 +566,23 @@ void TFT_ShowUI(volatile const struct Oscilloscope *value)
 	TFT_ShowString(5,106,(uint8_t *)showData,BLACK,GREEN,16,0);
 	memset(showData,0,32);
 	
+	
+	//frequency
 	if((*value).gatherFreq>=1000)
 	{
-			sprintf(showData,"%3dKHz",(*value).gatherFreq/1000);
+			//sprintf(showData,"%3dKHz",(*value).gatherFreq/1000);
 			TFT_ShowString(55,106,(uint8_t *)showData,BLACK,GREEN,16,0);  
 			memset(showData,0,32);
 	}
 	else
 	{
-			sprintf(showData,"%3dHz ",(*value).gatherFreq);
+			//sprintf(showData,"%3dHz ",(*value).gatherFreq);
 			TFT_ShowString(55,106,(uint8_t *)showData,BLACK,GREEN,16,0);  
 			memset(showData,0,32);  
 	}
 	
+	
+	//pwm status
 	if((*value).ouptputbit == 1)
 	{   
 			TFT_ShowChinese(118,36,(uint8_t *)"打开",BLACK,YELLOW,16,0);
@@ -611,14 +607,8 @@ void TFT_ShowUI(volatile const struct Oscilloscope *value)
 	sprintf(showData,"  %2d%%",(uint16_t)((((*value).pwmOut)/((*value).timerPeriod+0.0f))*100));
 	TFT_ShowString(110,106,(uint8_t *)showData,BLACK,YELLOW,16,0);  
 	memset(showData,0,32); 
-	
-//	printf(showData,"%1.2fV",(*value).pvpp);
-//	TFT_ShowString(100,35,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-//	memset(showData,0,32);
-//	
-//	printf(showData,"%1.2fV",(*value).nvpp);
-//	TFT_ShowString(100,65,(uint8_t *)showData,BLACK,YELLOW,1,0);  
-//	memset(showData,0,32);
+
+	//TFT_DrawRectangle(116,34,136,54,YELLOW);
 	
 }
 
