@@ -1,9 +1,7 @@
 #include "key.h"
 #include "timer.h"
 #include "tft.h"
-
-//TODO
-#include "main.h"
+#include "menu.h"
 
 static uint8_t keyValue=0;
 static uint8_t key1_state = 0;
@@ -79,6 +77,7 @@ extern MENU_OptionTypeDef MENU_OptionList[];
 *   函数参数：无
 *   返回值：  无
 */
+extern uint8_t menuSize;
 void Key_Handle(volatile struct Oscilloscope *value)
 {
 	uint8_t i=0,j=0;
@@ -86,37 +85,14 @@ void Key_Handle(volatile struct Oscilloscope *value)
 	switch((*value).keyValue)
 	{
 		case KEY1PRESS:
-            (*value).pwmOut=((uint32_t)(*value).timerPeriod*0.04f)+(*value).pwmOut;
-            if((*value).pwmOut > (*value).timerPeriod)
-            {
-                (*value).pwmOut = 0;
-            }
-            Set_Output_PWMComparex((*value).pwmOut);
+            
 			break;
-        case KEY3PRESS:
-            tempValue=(*value).pwmOut/((*value).timerPeriod+0.0f);
-            (*value).timerPeriod = (*value).timerPeriod/2;
-            if((*value).timerPeriod < 250)
-            {
-                (*value).timerPeriod = 1000;
-            }
-            (*value).outputFreq = 1000000/(*value).timerPeriod;
-            (*value).pwmOut = (uint16_t)((*value).timerPeriod*tempValue);
-            Set_Output_PWMComparex((*value).pwmOut);
-            Set_Output_Freq((*value).timerPeriod-1);
-            tempValue=0;
-						break;
         case KEY2PRESS:
-            if((*value).ouptputbit == 0)
-            {
-                (*value).ouptputbit=1;
-                timer_enable(TIMER14);
-            }
-            else
-            {
-                (*value).ouptputbit=0;
-               timer_disable(TIMER14); 
-            }
+            
+						break;
+        case KEY3PRESS:
+						(*value).menuSel+=1;
+						if((*value).menuSel>=menuSize)(*value).menuSel=0;
             break;
 				 case KEYDPRESS:
 					  if((*value).isSel!=0){

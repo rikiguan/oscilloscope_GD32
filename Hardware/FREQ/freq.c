@@ -122,7 +122,7 @@ void TIMER2_IRQHandler(void)
             
             //º∆À„∆µ¬ 
             freq = 1000000U / count;     
-            Freq_calibration(&freq);
+            //Freq_calibration(&freq);
             oscilloscope.gatherFreq = freq; 
          
             readvalue1=0;readvalue2=0;

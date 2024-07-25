@@ -10,7 +10,7 @@ struct Oscilloscope
 	 
 	 float trigV;
 	 uint8_t trigMode;
-	
+	 uint8_t dimmerMultpile;
    uint8_t keyValue;        //°´¼üÖµ
 	 uint8_t menuSel;
 	 uint8_t itemSel;
@@ -31,14 +31,5 @@ struct Oscilloscope
 };
 
 
-typedef struct _MENU_OptionTypeDef
-{
-    char *String;
-		char* item[3];
-    char *(*funcdis)(volatile struct Oscilloscope *value,uint8_t item);
-		void (*funchand)(volatile struct Oscilloscope *value,uint8_t key); 	
-} MENU_OptionTypeDef;
-
-void MENU_SEL_HANDLER(volatile struct Oscilloscope *value,uint8_t key);
 
 #endif /* MAIN_H */

@@ -12,127 +12,7 @@
 #include "freq.h"
 #include "main.h"
 
-//TODO
-#include "key.h"
-    
-void MENU_SEL_HANDLER(volatile struct Oscilloscope *value,uint8_t key){
-		switch(key){
-			case KEYAPRESS:
-				if((*value).itemSel>=1)
-					(*value).itemSel-=1;
-				break;
-		  case KEYBPRESS:
-				if((*value).itemSel<=1)
-					(*value).itemSel+=1;
-				break;
-			case KEYDPRESS:
-				(*value).isSel=1;
-				return;
-		}
-		
-}
-uint8_t _isChange=0;
-void MENU_HANDLER_PWM(volatile struct Oscilloscope *value,uint8_t key){}
-void MENU_HANDLER_MAIN(volatile struct Oscilloscope *value,uint8_t key){
-		if((*value).isSel){
-			if(key == KEYDPRESS){
-				(*value).isSel=0;
-			}
-			switch((*value).itemSel){
-				case 0:
-					switch(key){
-						  case KEYAPRESS:
-								(*value).trigV+=0.1;
-								break;
-						  case KEYBPRESS:
-								(*value).trigV-=0.1;
-								break;
-					}
-					break;
-				case 1:
-					(*value).trigMode=!(*value).trigMode;
-					break;
-				case 2:
-					(*value).pause=!(*value).pause;
-					break;				
-		}
-	}
-	_isChange=1;
-}
-
-static char _MENU_showData[32]={0};
-char* MENU_DISPLAY_PWM(volatile struct Oscilloscope *value,uint8_t item){
-	return "xxx";
-}
-char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
-		switch(item){
-			case 0:
-					sprintf(_MENU_showData,"%1.2fV ",(*value).trigV);
-					return (char *)_MENU_showData;
-			case 1:
-				if((*value).trigMode){
-					return "UP";
-				}else{
-					return "DOWN";
-				}
-			case 2:
-				if((*value).pause){
-					return "STOP";
-				}else{
-					return "RUN";
-				}
-					
-			default: return "xxx";
-		}
-}
-
-MENU_OptionTypeDef MENU_OptionList[] ={
-{"main",{"trig","mode","pause"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
-{"pwm",{"freq","open","duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM}
-};
-
-uint8_t menuNum=2;
-#define MenuX1Position 110
-#define MenuX2Position 160
-
-#define ItemX1Position 110
-#define ItemX2Position 160
-
-uint8_t _menuSel=99;
-uint8_t _itemSel=99;
-uint8_t _isSel;
-
-void drawMenu(volatile struct Oscilloscope *value){
-	if((_menuSel!=(*value).menuSel)){
-	TFT_Fill(MenuX1Position,0,MenuX2Position,16,YELLOW);
-	TFT_Fill(MenuX1Position,20,MenuX2Position,32,YELLOW);
-	TFT_Fill(MenuX1Position,56,MenuX2Position,68,YELLOW);
-	TFT_Fill(MenuX1Position,92,MenuX2Position,104,YELLOW);
-	TFT_ShowString(110,0,(uint8_t *)MENU_OptionList[(*value).menuSel].String,BLACK,YELLOW,16,0);
-	TFT_ShowString(110,20,(uint8_t *)MENU_OptionList[(*value).menuSel].item[0],WHITE,PURPLE,12,0);
-	TFT_ShowString(110,56,(uint8_t *)MENU_OptionList[(*value).menuSel].item[1],WHITE,PURPLE,12,0);
-	TFT_ShowString(110,92,(uint8_t *)MENU_OptionList[(*value).menuSel].item[2],WHITE,PURPLE,12,0);
-	_menuSel=(*value).menuSel;
-	}
-}
-uint8_t _menuSel;
-uint8_t _itemSel;
-uint8_t _isSel;
-
-void drawItem(volatile struct Oscilloscope *value){
-	if((_menuSel!=(*value).menuSel)||(_itemSel!=(*value).itemSel)||(_isSel!=(*value).isSel)||	_isChange){
-	TFT_Fill(ItemX1Position,36,ItemX2Position,52,GRAY);
-	TFT_Fill(ItemX1Position,72,ItemX2Position,88,GRAY);
-	TFT_Fill(ItemX1Position,108,ItemX2Position,124,GRAY);
-	TFT_ShowString(110,36,(uint8_t *)MENU_OptionList[(*value).menuSel].funcdis(value,0),(((*value).itemSel==0)&&((*value).isSel==1))?PURPLE:BLACK,YELLOW,((*value).itemSel==0)?16:12,0);
-	TFT_ShowString(110,72,(uint8_t *)MENU_OptionList[(*value).menuSel].funcdis(value,1),(((*value).itemSel==1)&&((*value).isSel==1))?PURPLE:BLACK,YELLOW,((*value).itemSel==1)?16:12,0);
-	TFT_ShowString(110,108,(uint8_t *)MENU_OptionList[(*value).menuSel].funcdis(value,2),(((*value).itemSel==2)&&((*value).isSel==1))?PURPLE:BLACK,YELLOW,((*value).itemSel==2)?16:12,0);
-	_menuSel=(*value).menuSel;
-	_itemSel=(*value).itemSel;
-	_isSel=(*value).isSel;
-	_isChange=0;
-	}
-}
+#include "menu.h"
 
 
 volatile struct Oscilloscope oscilloscope={0};
@@ -226,7 +106,7 @@ int main(void)
                 }
                 
             }
-            oscilloscope.vpp=oscilloscope.pvpp-oscilloscope.nvpp;
+            oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp)*(oscilloscope.dimmerMultpile+0.0f);
 						if(oscilloscope.vpp <= 0.3)//ignore <0.3
             {
                     oscilloscope.gatherFreq=0;
@@ -276,9 +156,10 @@ int main(void)
             }          
         }        
         //参数显示UI
-        //TFT_ShowUI(&oscilloscope); 
+        TFT_ShowUI(&oscilloscope); 
         drawMenu(&oscilloscope); 
 				drawItem(&oscilloscope); 
+				resetMenuFlag(&oscilloscope);
     }
 }
 
@@ -294,6 +175,7 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value)
 	  (*value).trigMode =0;
 		(*value).menuSel    =0;   //0->trigger
 		(*value).itemSel    =0; 	
+	  (*value).dimmerMultpile =1; 
 		(*value).isSel       =0; 	//0->default no selection
     (*value).sampletime =ADC_SAMPLETIME_239POINT5;  //adc采样周期
     (*value).keyValue   =0;                         //清楚按键值

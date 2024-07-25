@@ -528,8 +528,8 @@ void TFT_StaticUI(void)
 //    TFT_ShowChinese(118,92,(uint8_t *)"占空比",WHITE,PURPLE,12,0);
 //    
 //		
-//    TFT_ShowChinese(5,92,(uint8_t *)"输入幅值",WHITE,PURPLE,12,0);
-//    TFT_ShowChinese(55,92,(uint8_t *)"输入频率",WHITE,PURPLE,12,0);
+    TFT_ShowChinese(5,92,(uint8_t *)"输入幅值",WHITE,PURPLE,12,0);
+    TFT_ShowChinese(55,92,(uint8_t *)"输入频率",WHITE,PURPLE,12,0);
     
     for(i=0;i<=128;i=i+2)
     {
@@ -570,43 +570,43 @@ void TFT_ShowUI(volatile const struct Oscilloscope *value)
 	//frequency
 	if((*value).gatherFreq>=1000)
 	{
-			//sprintf(showData,"%3dKHz",(*value).gatherFreq/1000);
+			sprintf(showData,"%3.1fKHz",(*value).gatherFreq/1000.0f);
 			TFT_ShowString(55,106,(uint8_t *)showData,BLACK,GREEN,16,0);  
 			memset(showData,0,32);
 	}
 	else
 	{
-			//sprintf(showData,"%3dHz ",(*value).gatherFreq);
+			sprintf(showData,"%3.fHz ",(*value).gatherFreq);
 			TFT_ShowString(55,106,(uint8_t *)showData,BLACK,GREEN,16,0);  
 			memset(showData,0,32);  
 	}
 	
 	
-	//pwm status
-	if((*value).ouptputbit == 1)
-	{   
-			TFT_ShowChinese(118,36,(uint8_t *)"打开",BLACK,YELLOW,16,0);
-	}
-	else
-	{
-			TFT_ShowChinese(118,36,(uint8_t *)"关闭",BLACK,YELLOW,16,0);     
-	}
-	
-	if((*value).outputFreq>=1000)
-	{
-			sprintf(showData,"%3dKHz",(*value).outputFreq/1000);
-			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0); 	
-			memset(showData,0,32); 
-	}
-	else
-	{
-			sprintf(showData," %3dHz",(*value).outputFreq);
-			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-			memset(showData,0,32);
-	} 
-	sprintf(showData,"  %2d%%",(uint16_t)((((*value).pwmOut)/((*value).timerPeriod+0.0f))*100));
-	TFT_ShowString(110,106,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-	memset(showData,0,32); 
+//	//pwm status
+//	if((*value).ouptputbit == 1)
+//	{   
+//			TFT_ShowChinese(118,36,(uint8_t *)"打开",BLACK,YELLOW,16,0);
+//	}
+//	else
+//	{
+//			TFT_ShowChinese(118,36,(uint8_t *)"关闭",BLACK,YELLOW,16,0);     
+//	}
+//	
+//	if((*value).outputFreq>=1000)
+//	{
+//			sprintf(showData,"%3dKHz",(*value).outputFreq/1000);
+//			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0); 	
+//			memset(showData,0,32); 
+//	}
+//	else
+//	{
+//			sprintf(showData," %3dHz",(*value).outputFreq);
+//			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0);  
+//			memset(showData,0,32);
+//	} 
+//	sprintf(showData,"  %2d%%",(uint16_t)((((*value).pwmOut)/((*value).timerPeriod+0.0f))*100));
+//	TFT_ShowString(110,106,(uint8_t *)showData,BLACK,YELLOW,16,0);  
+//	memset(showData,0,32); 
 
 	//TFT_DrawRectangle(116,34,136,54,YELLOW);
 	
