@@ -7,6 +7,7 @@
 
 uint16_t Get_ADC_Value(uint16_t value);
 void Init_ADC(void);
+void Opt_ADC_Value();
 void ADC_DMA_Init(void);
 void ADC_Config(void);
 unsigned int Get_ADC_Value2(uint8_t  ADC_CHANNEL_x);

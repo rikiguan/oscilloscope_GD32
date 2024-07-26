@@ -34,7 +34,6 @@ int main(void)
     float gainFactor=0;
 	
 		float adcValue = 0;
-    
     //触发沿标记
     uint16_t Trigger_number=0;
     
@@ -89,6 +88,8 @@ int main(void)
 					
 					  oscilloscope.pvpp=0;
 					  oscilloscope.nvpp=0;
+					
+						Opt_ADC_Value();
             //转换电压值
             for(i=0;i<300;i++)
             {
@@ -96,6 +97,7 @@ int main(void)
 							
 								oscilloscope.voltageValue[i] = (5-(2.0f*adcValue));//true voltage
 							
+
                 if((oscilloscope.pvpp) < oscilloscope.voltageValue[i])//find max voltage
                 {
                     oscilloscope.pvpp = oscilloscope.voltageValue[i];
@@ -153,7 +155,9 @@ int main(void)
 								if(oscilloscope.pause==1)break;
 							
                 drawCurve(55,voltage);
-            }          
+            }  
+						
+						 						
         }        
         //参数显示UI
         TFT_ShowUI(&oscilloscope); 

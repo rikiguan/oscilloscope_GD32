@@ -1,9 +1,18 @@
 #include "adc.h"
 #include "main.h"
 
+#include "update.h"
 #define ADC_VALUE_NUM 300U
 
 uint16_t adc_value[ADC_VALUE_NUM];
+uint16_t filteredValues[ADC_VALUE_NUM];
+#define WindowSize 5
+
+void Opt_ADC_Value()
+{
+    medianFilter(adc_value,filteredValues,ADC_VALUE_NUM,WindowSize);
+}
+
 
 /*
 *   函数内容：得到ADC值
@@ -17,8 +26,8 @@ uint16_t Get_ADC_Value(uint16_t value)
     {
         value=0;
     }
-    returnValue=adc_value[value];
-    adc_value[value]=0;
+    returnValue=filteredValues[value];
+    filteredValues[value]=0;
     return returnValue;
 }
 /*
