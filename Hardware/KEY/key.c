@@ -84,9 +84,9 @@ void Key_Handle(volatile struct Oscilloscope *value)
 	float tempValue=0;
 	switch((*value).keyValue)
 	{
-		case KEY1PRESS:
-            
-			break;
+				case KEY1PRESS:
+            (*value).pause=!(*value).pause;
+						break;
         case KEY2PRESS:
             
 						break;

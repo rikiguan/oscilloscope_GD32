@@ -10,7 +10,7 @@
 #define ItemX2Position 160
 
 MENU_OptionTypeDef MENU_OptionList[] ={
-{"main",{"trig","mode","pause"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
+{"main",{"trig","mode","base"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
 {"pwm",{"freq","open","duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
 {"set",{"dim","---","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
 };
@@ -189,9 +189,9 @@ char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
 					return (char *)_MENU_showData;
 			case 1:
 				if((*value).trigMode){
-					return "UP";
-				}else{
 					return "DOWN";
+				}else{
+					return "UP";
 				}
 			case 2:
 				if((*value).pause){

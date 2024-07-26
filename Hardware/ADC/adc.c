@@ -130,3 +130,52 @@ void DMA_Channel0_IRQHandler(void)
         dma_interrupt_flag_clear(DMA_CH0, DMA_INT_FLAG_G);
     }
 }
+
+void ADC_TRIG_TIMMWE_Init(){
+	 //定时器通道输入参数结构体
+    timer_ic_parameter_struct timer_icinitpara;
+    
+    //定时器参数结构体
+    timer_parameter_struct timer_initpara;
+    
+
+    rcu_periph_clock_enable(RCU_TIMER0);
+    
+
+    //定时器中断使能
+    nvic_irq_enable(TIMER2_IRQn, 2U);
+    
+    //复位定时器
+    timer_deinit(TIMER2);
+    
+    //定时器参数初始化
+    timer_struct_para_init(&timer_initpara);
+    
+    timer_initpara.prescaler         = 71;                  //预分频器参数1M
+    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;  //边沿对齐
+    timer_initpara.counterdirection  = TIMER_COUNTER_UP;    //向上计数
+    timer_initpara.period            = 65535;               //周期
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;    //时钟分频
+    timer_init(TIMER2, &timer_initpara);                    //参数初始化
+    
+    //定时器通道输入参数初始化
+    timer_channel_input_struct_para_init(&timer_icinitpara);
+    
+    timer_icinitpara.icpolarity  = TIMER_IC_POLARITY_RISING;        //通道输入极性
+    timer_icinitpara.icselection = TIMER_IC_SELECTION_DIRECTTI;     //通道输入模式选择
+    timer_icinitpara.icprescaler = TIMER_IC_PSC_DIV1;               //通道输入捕获预分频
+    timer_icinitpara.icfilter    = 0x00;                             //通道输入捕获滤波
+    timer_input_capture_config(TIMER2,TIMER_CH_0,&timer_icinitpara);
+    
+    //使能自动重装载值
+    timer_auto_reload_shadow_enable(TIMER2);
+    
+    //清除中断标志位
+    timer_interrupt_flag_clear(TIMER2,TIMER_INT_FLAG_CH0);
+    
+    //使能定时器通道中断
+    timer_interrupt_enable(TIMER2,TIMER_INT_CH0);
+    
+    //定时器中断使能
+    timer_enable(TIMER2);
+}

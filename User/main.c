@@ -95,7 +95,7 @@ int main(void)
             {
 								adcValue = (Get_ADC_Value(i)*3.3f)/4096.0f;//0-3.3
 							
-								oscilloscope.voltageValue[i] = (5-(2.0f*adcValue));//true voltage
+								oscilloscope.voltageValue[i] = (5-(2.0f*adcValue))* (oscilloscope.dimmerMultpile+0.0f);//true voltage
 							
 
                 if((oscilloscope.pvpp) < oscilloscope.voltageValue[i])//find max voltage
@@ -108,7 +108,13 @@ int main(void)
                 }
                 
             }
-            oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp)*(oscilloscope.dimmerMultpile+0.0f);
+
+						
+						
+						
+						
+						
+            oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
 						if(oscilloscope.vpp <= 0.3)//ignore <0.3
             {
                     oscilloscope.gatherFreq=0;
@@ -121,6 +127,7 @@ int main(void)
             //找到起始显示波形值
             for(i=0;i<200;i++)
             {
+							if(oscilloscope.trigMode){
                 if(oscilloscope.voltageValue[i] < oscilloscope.trigV)//finding rising edge
                 {
                     for(;i<200;i++)
@@ -133,7 +140,21 @@ int main(void)
                     }
                     break;
                 }
-            }
+							}else{
+								if(oscilloscope.voltageValue[i] > oscilloscope.trigV)//finding falling edge
+                {
+                    for(;i<200;i++)
+                    {
+                        if(oscilloscope.voltageValue[i] < oscilloscope.trigV)
+                        {
+                            Trigger_number=i;
+                            break;
+                        }
+                    }
+                    break;
+                }
+							}
+            }	
       			//获取中间值
 						median = oscilloscope.vpp / 2.0f+oscilloscope.nvpp;
             //如果幅值过小，会出现放大倍数过大导致波形显示异常的问题
@@ -158,7 +179,16 @@ int main(void)
             }  
 						
 						 						
-        }        
+        }
+				
+				if(oscilloscope.pause==1){
+					Open_LED(2);
+					CLose_LED(1);
+				}else{
+					Open_LED(1);
+					CLose_LED(2);
+				}
+				printf("frequence:%f\n",oscilloscope.gatherFreq);
         //参数显示UI
         TFT_ShowUI(&oscilloscope); 
         drawMenu(&oscilloscope); 
@@ -176,7 +206,7 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value)
 {
     (*value).showbit    =0;                         //清除显示标志位
 		(*value).pause    =0; 
-	  (*value).trigMode =0;
+	  (*value).trigMode =1;
 		(*value).menuSel    =0;   //0->trigger
 		(*value).itemSel    =0; 	
 	  (*value).dimmerMultpile =1; 
