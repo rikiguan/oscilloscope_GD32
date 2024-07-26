@@ -67,7 +67,7 @@ void Init_ADC(void)
     adc_channel_length_config(ADC_REGULAR_CHANNEL, 1U);   
 
     //ADC常规通道配置--PA3，顺序组0，通道3，采样时间55.5个时钟周期
-    adc_regular_channel_config(0, ADC_CHANNEL_3, ADC_SAMPLETIME_239POINT5);    
+    adc_regular_channel_config(0, ADC_CHANNEL_3, ADC_SAMPLETIME_55POINT5);    
     
     //ADC触发器配置，软件触发
     adc_external_trigger_source_config(ADC_REGULAR_CHANNEL, ADC_EXTTRIG_REGULAR_T0_CH0);
@@ -75,7 +75,7 @@ void Init_ADC(void)
     
     //使能ADC
     adc_enable();
-    delay_1ms(1U);
+    delay_ms(1U);
     
     //使能校准和复位
     adc_calibration_enable();

@@ -72,25 +72,6 @@ void delay_us(uint32_t count)
     \param[out] none
     \retval     none
 */
-void delay_1ms(uint32_t count)
-{
-    uint32_t ctl;
-    
-    /* reload the count value */
-    SysTick->LOAD = (uint32_t)(count * count_1ms);
-    /* clear the current count value */
-    SysTick->VAL = 0x0000U;
-    /* enable the systick timer */
-    SysTick->CTRL = SysTick_CTRL_ENABLE_Msk;
-    /* wait for the COUNTFLAG flag set */
-    do{
-        ctl = SysTick->CTRL;
-    }while((ctl&SysTick_CTRL_ENABLE_Msk)&&!(ctl & SysTick_CTRL_COUNTFLAG_Msk));
-    /* disable the systick timer */
-    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-    /* clear the current count value */
-    SysTick->VAL = 0x0000U;
-}
 
 void delay_ms(uint32_t count)
 {

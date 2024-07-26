@@ -74,7 +74,8 @@ int main(void)
     
     //初始化频率定时器2
     Init_FreqTimer();
-    
+		//waiting for 3s
+    TFT_ShowWelcomeUI();
     //初始化静态UI
     TFT_StaticUI();
     while(1)
@@ -129,7 +130,7 @@ int main(void)
             //找到起始显示波形值
             for(i=0;i<200;i++)
             {
-							if(oscilloscope.trigMode){
+							if(!oscilloscope.trigMode){
                 if(oscilloscope.voltageValue[i] < oscilloscope.trigV)//finding rising edge
                 {
                     for(;i<200;i++)
@@ -209,12 +210,13 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value)
 {
     (*value).showbit    =0;                         //清除显示标志位
 		(*value).pause    =0; 
-	  (*value).trigMode =1;
+	  (*value).trigMode =0;
 		(*value).menuSel    =0;   //0->trigger
 		(*value).itemSel    =0; 	
 	  (*value).dimmerMultpile =1; 
 		(*value).isSel       =0; 	//0->default no selection
-    (*value).sampletime =ADC_SAMPLETIME_239POINT5;  //adc采样周期
+	  (*value).sampletime = 9;
+	  (*value).adcMode=ADC_SAMPLETIME_55POINT5;
     (*value).keyValue   =0;                         //清楚按键值
     (*value).ouptputbit =0;                         //输出标志位
     (*value).gatherFreq =0;                         //采集频率

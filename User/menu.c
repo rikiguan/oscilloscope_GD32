@@ -12,7 +12,7 @@
 MENU_OptionTypeDef MENU_OptionList[] ={
 {"main",{"trig","mode","base"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
 {"pwm",{"freq","open","duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
-{"set",{"dim","---","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
+{"set",{"dim","adc","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
 };
 static char _MENU_showData[32]={0};
 uint8_t _isChange=0;
@@ -50,6 +50,8 @@ char* MENU_DISPLAY_SET(volatile struct Oscilloscope *value,uint8_t item){
 			case 0:		
 				return ((*value).dimmerMultpile==1)?"x1":"x50";
 			case 1:
+				sprintf(_MENU_showData,"%d",(*value).adcMode);		
+				return (char *)_MENU_showData;
 
 			case 2:
 
@@ -77,7 +79,16 @@ void MENU_HANDLER_SET(volatile struct Oscilloscope *value,uint8_t key){
 					}
 					break;
 				case 1:
+					switch(key){
+						  case KEYAPRESS:
+								(*value).adcMode=((*value).adcMode+1)%8;
+								break;
+						  case KEYBPRESS:
+								(*value).adcMode=((*value).adcMode-1)%8;
+								break;
+					}
 					
+					 adc_regular_channel_config(0, ADC_CHANNEL_3, (*value).adcMode);
 					break;
 				case 2:
 					
@@ -180,7 +191,7 @@ void MENU_HANDLER_PWM(volatile struct Oscilloscope *value,uint8_t key){
 
 
 
-//--------------------------MENU-------------------------
+//--------------------------MAIN-------------------------
 
 char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
 		switch(item){
@@ -194,11 +205,8 @@ char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
 					return "UP";
 				}
 			case 2:
-				if((*value).pause){
-					return "STOP";
-				}else{
-					return "RUN";
-				}
+				sprintf(_MENU_showData,"%.2fms",10.0f/((*value).sampletime+1.0f));
+				return (char *)_MENU_showData;
 					
 			default: return "xxx";
 		}
@@ -225,9 +233,16 @@ void MENU_HANDLER_MAIN(volatile struct Oscilloscope *value,uint8_t key){
 					(*value).trigMode=!(*value).trigMode;
 					break;
 				case 2:
-					if(key & 0b00110000)
-					(*value).pause=!(*value).pause;
-					break;				
+					switch(key){
+						  case KEYAPRESS:
+								(*value).sampletime+=1;
+								break;
+						  case KEYBPRESS:
+								(*value).sampletime-=1;
+								break;
+					}
+					timer_autoreload_value_config(TIMER0,(*value).sampletime);
+					break;			
 		}
 			_isChange=1;
 	}

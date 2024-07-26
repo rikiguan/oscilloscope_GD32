@@ -92,6 +92,8 @@ void Key_Handle(volatile struct Oscilloscope *value)
 						break;
         case KEY3PRESS:
 						(*value).menuSel+=1;
+					  (*value).isSel=0;
+						(*value).itemSel=0;
 						if((*value).menuSel>=menuSize)(*value).menuSel=0;
             break;
 				 case KEYDPRESS:
@@ -127,7 +129,7 @@ void Key_Handle(volatile struct Oscilloscope *value)
 void Key_Sacnf(volatile struct Oscilloscope *value)
 {
 	if(key1_state == KEYPRESS){
-		delay_1ms(20);
+		delay_ms(20);
 		if(gpio_input_bit_get(GPIOB,GPIO_PIN_13) == RESET){
 			(*value).keyValue = KEY1PRESS;
 			key1_state = NoPRESS;
@@ -138,7 +140,7 @@ void Key_Sacnf(volatile struct Oscilloscope *value)
 	}
 	
 	if(key2_state == KEYPRESS){
-		delay_1ms(20);
+		delay_ms(20);
 		if(gpio_input_bit_get(GPIOB,GPIO_PIN_14) == RESET){
 			(*value).keyValue = KEY2PRESS;
 			key2_state = NoPRESS;
@@ -149,7 +151,7 @@ void Key_Sacnf(volatile struct Oscilloscope *value)
 	}
 	
 	if(key3_state == KEYPRESS){
-		delay_1ms(20);
+		delay_ms(20);
 		if(gpio_input_bit_get(GPIOB,GPIO_PIN_15) == RESET){
 			(*value).keyValue = KEY3PRESS;
 			key3_state = NoPRESS;
@@ -160,7 +162,7 @@ void Key_Sacnf(volatile struct Oscilloscope *value)
 	}
 	
 	if(key4_state == KEYPRESS){
-		delay_1ms(20);
+		delay_ms(20);
 		if(gpio_input_bit_get(GPIOB,GPIO_PIN_9) == RESET){
 			(*value).keyValue = KEYDPRESS;
 			key4_state = NoPRESS;

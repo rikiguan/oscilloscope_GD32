@@ -330,16 +330,16 @@ void TFT_Init(void)
     Init_SPI0_GPIO();
     
     gpio_bit_reset(GPIOB,GPIO_PIN_5);   //复位
-    delay_1ms(100);
+    delay_ms(100);
     gpio_bit_set(GPIOB,GPIO_PIN_5);     //
-    delay_1ms(100);
+    delay_ms(100);
     
     gpio_bit_set(GPIOB,GPIO_PIN_8);     //打开背光
-    delay_1ms(100);
+    delay_ms(100);
     
 	//************* Start Initial Sequence **********//
 	TFT_WR_REG(0x11); //Sleep out 
-	delay_1ms(120);              //Delay 120ms 
+	delay_ms(120);              //Delay 120ms 
 	//------------------------------------ST7735S Frame Rate-----------------------------------------// 
 	TFT_WR_REG(0xB1); 
 	TFT_WR_DATA8(0x05); 

@@ -503,10 +503,7 @@ void TFT_ShowChinese24x24(uint16_t x,uint16_t y,uint8_t *s,uint16_t fc,uint16_t 
 
 
 
-void TFT_StaticUI_ITEM(void)
-{
-		
-}
+
 void TFT_StaticUI(void)
 {
     uint16_t i=0;
@@ -581,37 +578,20 @@ void TFT_ShowUI(volatile const struct Oscilloscope *value)
 			memset(showData,0,32);  
 	}
 	
-	
-//	//pwm status
-//	if((*value).ouptputbit == 1)
-//	{   
-//			TFT_ShowChinese(118,36,(uint8_t *)"´ò¿ª",BLACK,YELLOW,16,0);
-//	}
-//	else
-//	{
-//			TFT_ShowChinese(118,36,(uint8_t *)"¹Ø±Õ",BLACK,YELLOW,16,0);     
-//	}
-//	
-//	if((*value).outputFreq>=1000)
-//	{
-//			sprintf(showData,"%3dKHz",(*value).outputFreq/1000);
-//			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0); 	
-//			memset(showData,0,32); 
-//	}
-//	else
-//	{
-//			sprintf(showData," %3dHz",(*value).outputFreq);
-//			TFT_ShowString(110,72,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-//			memset(showData,0,32);
-//	} 
-//	sprintf(showData,"  %2d%%",(uint16_t)((((*value).pwmOut)/((*value).timerPeriod+0.0f))*100));
-//	TFT_ShowString(110,106,(uint8_t *)showData,BLACK,YELLOW,16,0);  
-//	memset(showData,0,32); 
 
-	//TFT_DrawRectangle(116,34,136,54,YELLOW);
 	
 }
 
+void TFT_ShowWelcomeUI()
+{	
+	TFT_Fill(0,0,160,128,BLACK);
+	TFT_DrawRectangle(4,48,156,80,PURPLE);
+	TFT_ShowString(8,52,(uint8_t *)"Oscilloscope",WHITE,PURPLE,24,0);
+	Draw_Circle(156,80,4,PURPLE);
+	
+	delay_ms(3000);
+	TFT_Fill(0,0,160,128,BLACK);
+}
 
 
 
