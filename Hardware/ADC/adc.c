@@ -49,8 +49,10 @@ void Init_ADC(void)
     //引脚配置，PA3，模拟输入，无上下拉
     gpio_mode_set(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_PIN_3);
     
-    //ADC连续功能使能
-    adc_special_function_config(ADC_CONTINUOUS_MODE, ENABLE); 
+    //ADC连续功能使能//TODO
+    adc_special_function_config(ADC_CONTINUOUS_MODE, DISABLE); 
+
+    adc_discontinuous_mode_config(ADC_REGULAR_CHANNEL, 1);
 
     //ADC扫描功能失能，这里仅一个通道
     adc_special_function_config(ADC_SCAN_MODE, DISABLE);
@@ -58,7 +60,7 @@ void Init_ADC(void)
     //ADC注入组自动转换模式失能，这里无需注入组
     adc_special_function_config(ADC_INSERTED_CHANNEL_AUTO, DISABLE);    
     
-    //ADC数据校准配置
+    //ADC数据校准配置 
     adc_data_alignment_config(ADC_DATAALIGN_RIGHT);
     
     //ADC通道长度配置
@@ -68,7 +70,7 @@ void Init_ADC(void)
     adc_regular_channel_config(0, ADC_CHANNEL_3, ADC_SAMPLETIME_239POINT5);    
     
     //ADC触发器配置，软件触发
-    adc_external_trigger_source_config(ADC_REGULAR_CHANNEL, ADC_EXTTRIG_REGULAR_NONE); 
+    adc_external_trigger_source_config(ADC_REGULAR_CHANNEL, ADC_EXTTRIG_REGULAR_T0_CH0);
     adc_external_trigger_config(ADC_REGULAR_CHANNEL, ENABLE);
     
     //使能ADC
@@ -131,51 +133,112 @@ void DMA_Channel0_IRQHandler(void)
     }
 }
 
-void ADC_TRIG_TIMMWE_Init(){
-	 //定时器通道输入参数结构体
-    timer_ic_parameter_struct timer_icinitpara;
-    
-    //定时器参数结构体
-    timer_parameter_struct timer_initpara;
-    
+void ADC_TRIG_TIMMER_Init(){
+//	//定时器通道输入参数结构体
+//    timer_oc_parameter_struct timer_ocinitpara;
+//    //定时器参数结构体
+//    timer_parameter_struct timer_initpara;
+//    rcu_periph_clock_enable(RCU_TIMER0);
 
-    rcu_periph_clock_enable(RCU_TIMER0);
-    
+//    //复位定时器
+//    timer_deinit(TIMER0);
+//    
+//    //定时器参数初始化
+//    timer_struct_para_init(&timer_initpara);
+//    
+//    timer_initpara.prescaler         = 71;                  //预分频器参数1M
+//    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;  //边沿对齐
+//    timer_initpara.counterdirection  = TIMER_COUNTER_UP;    //向上计数
+//    timer_initpara.period            = 500;               //周期
+//    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;    //时钟分频
+//		timer_initpara.repetitioncounter = 0;								    //重装载值
+//    timer_init(TIMER0, &timer_initpara);                    //参数初始化
+//    
+//    //定时器通道输入参数初始化
+//    timer_channel_output_struct_para_init(&timer_ocinitpara);
+//    
+//		timer_ocinitpara.ocpolarity  = TIMER_OC_POLARITY_HIGH;
+//    timer_ocinitpara.outputstate = TIMER_CCX_ENABLE;
+//    timer_channel_output_config(TIMER0, TIMER_CH_0, &timer_ocinitpara);
 
-    //定时器中断使能
-    nvic_irq_enable(TIMER2_IRQn, 2U);
-    
-    //复位定时器
-    timer_deinit(TIMER2);
-    
-    //定时器参数初始化
-    timer_struct_para_init(&timer_initpara);
-    
-    timer_initpara.prescaler         = 71;                  //预分频器参数1M
-    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;  //边沿对齐
-    timer_initpara.counterdirection  = TIMER_COUNTER_UP;    //向上计数
-    timer_initpara.period            = 65535;               //周期
-    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;    //时钟分频
-    timer_init(TIMER2, &timer_initpara);                    //参数初始化
-    
-    //定时器通道输入参数初始化
-    timer_channel_input_struct_para_init(&timer_icinitpara);
-    
-    timer_icinitpara.icpolarity  = TIMER_IC_POLARITY_RISING;        //通道输入极性
-    timer_icinitpara.icselection = TIMER_IC_SELECTION_DIRECTTI;     //通道输入模式选择
-    timer_icinitpara.icprescaler = TIMER_IC_PSC_DIV1;               //通道输入捕获预分频
-    timer_icinitpara.icfilter    = 0x00;                             //通道输入捕获滤波
-    timer_input_capture_config(TIMER2,TIMER_CH_0,&timer_icinitpara);
-    
-    //使能自动重装载值
-    timer_auto_reload_shadow_enable(TIMER2);
-    
-    //清除中断标志位
-    timer_interrupt_flag_clear(TIMER2,TIMER_INT_FLAG_CH0);
-    
-    //使能定时器通道中断
-    timer_interrupt_enable(TIMER2,TIMER_INT_CH0);
-    
-    //定时器中断使能
-    timer_enable(TIMER2);
+//	  //使能自动重装载
+//	  timer_auto_reload_shadow_enable(TIMER0);
+//	
+//		timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_0, 100);
+//    timer_channel_output_mode_config(TIMER0, TIMER_CH_0, TIMER_OC_MODE_PWM1);
+//    timer_channel_output_shadow_config(TIMER0, TIMER_CH_0, TIMER_OC_SHADOW_DISABLE);
+//		timer_primary_output_config(TIMER0, ENABLE);//important
+//    timer_enable(TIMER0);
+
+
+
+
+
+//定时器输出参数结构体
+	timer_oc_parameter_struct timer_ocinitpara;
+	
+	//定时器初始化参数结构体
+   timer_parameter_struct timer_initpara;
+	
+
+	//使能定时器0
+	rcu_periph_clock_enable(RCU_TIMER0);
+	
+	//使能时钟
+	rcu_periph_clock_enable(RCU_GPIOA);
+	
+	//GPIO复用模式设置--PA2-TIMER14_CH0
+	gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_4);
+	
+	//输出类型设置
+	gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ,GPIO_PIN_4);
+	
+	//复用模式0
+	gpio_af_set(GPIOA, GPIO_AF_0, GPIO_PIN_4);
+	
+	//复位定时器14
+	timer_deinit(TIMER0);
+	
+	//初始化定时器结构体参数
+	timer_struct_para_init(&timer_initpara);
+	
+	timer_initpara.prescaler         = 71;									//预分频器参数
+	timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;	                //边沿对齐
+	timer_initpara.counterdirection  = TIMER_COUNTER_UP;		            //向上计数
+	timer_initpara.period            = 9;								//周期
+	timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;		            //时钟分频
+	timer_initpara.repetitioncounter = 0;								    //重装载值
+	timer_init(TIMER0, &timer_initpara);
+	
+	//初始化定时器通道输出参数结构体
+	timer_channel_output_struct_para_init(&timer_ocinitpara);
+	
+	timer_ocinitpara.outputstate  = TIMER_CCX_ENABLE;				//输出状态，主输出通道开启
+	timer_ocinitpara.outputnstate = TIMER_CCXN_DISABLE;			    //互补输出状态关闭
+	timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_LOW;	        //输出极性为高
+	timer_ocinitpara.ocnpolarity  = TIMER_OCN_POLARITY_LOW;        //互补输出极性为高
+	timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_HIGH;        //空闲状态通道输出
+	timer_ocinitpara.ocnidlestate = TIMER_OCN_IDLE_STATE_HIGH;       //空闲状态互补通道输出
+	
+	timer_channel_output_config(TIMER0, TIMER_CH_0, &timer_ocinitpara);
+	
+	//输出比较值
+	timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_0, 2);
+	
+	//输出模式0，当计时器小于比较值时，输出有效电平，为高，大于比较器值时输出为低
+	timer_channel_output_mode_config(TIMER0, TIMER_CH_0, TIMER_OC_MODE_PWM1);
+	
+	//影子模式输出关闭
+	timer_channel_output_shadow_config(TIMER0, TIMER_CH_0, TIMER_OC_SHADOW_DISABLE);
+	
+	//使能自动重装载
+	timer_auto_reload_shadow_enable(TIMER0);
+
+	
+	//配置定时器为主要输出函数，所有通道使能
+	timer_primary_output_config(TIMER0, ENABLE);
+
+	timer_enable(TIMER0);	
+
+
 }

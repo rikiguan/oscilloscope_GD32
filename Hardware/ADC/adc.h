@@ -11,4 +11,5 @@ void Opt_ADC_Value();
 void ADC_DMA_Init(void);
 void ADC_Config(void);
 unsigned int Get_ADC_Value2(uint8_t  ADC_CHANNEL_x);
+void ADC_TRIG_TIMMER_Init();
 #endif

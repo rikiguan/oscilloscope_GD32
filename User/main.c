@@ -64,6 +64,8 @@ int main(void)
     //初始化PWM输出
     Init_PWM_Output(oscilloscope.timerPeriod-1,oscilloscope.pwmOut);
     
+		ADC_TRIG_TIMMER_Init();
+		
     //初始化EC11引脚
     Init_EC11_GPIO();
     
@@ -189,6 +191,7 @@ int main(void)
 					CLose_LED(2);
 				}
 				printf("frequence:%f\n",oscilloscope.gatherFreq);
+				printf("%d\n",timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0));
         //参数显示UI
         TFT_ShowUI(&oscilloscope); 
         drawMenu(&oscilloscope); 
