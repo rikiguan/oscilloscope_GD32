@@ -10,9 +10,10 @@
 #define ItemX2Position 160
 
 MENU_OptionTypeDef MENU_OptionList[] ={
-{"main",{"trig","mode","base"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
-{"pwm",{"freq","open","duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
-{"set",{"dim","adc","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
+{"MAIN",{"Trig","Mode","Base"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
+{"TOOL",{"Vmax","Cursor","Vmin"},MENU_DISPLAY_TOOL,MENU_HANDLER_TOOL},
+{"PWM",{"Freq","Open","Duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
+{"SET",{"Dim","Adc","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
 };
 static char _MENU_showData[32]={0};
 uint8_t _isChange=0;
@@ -41,6 +42,64 @@ void MENU_SEL_HANDLER(volatile struct Oscilloscope *value,uint8_t key){
 		}
 		
 }
+
+
+
+
+
+
+//--------------------------TOOL-------------------------
+
+char* MENU_DISPLAY_TOOL(volatile struct Oscilloscope *value,uint8_t item){
+	switch(item){
+			case 0:		
+				sprintf(_MENU_showData,"%1.2fV",(*value).pvpp);		
+				return (char *)_MENU_showData;
+			case 1:
+				sprintf(_MENU_showData,"%1.2fV",(*value).Cursor);		
+				return (char *)_MENU_showData;
+			case 2:
+				sprintf(_MENU_showData,"%1.2fV",(*value).nvpp);		
+				return (char *)_MENU_showData;
+			default: return "xxx";
+		}
+}
+
+
+void MENU_HANDLER_TOOL(volatile struct Oscilloscope *value,uint8_t key){
+			if((*value).isSel){
+				if(key == KEYDPRESS){
+					(*value).isSel=0;
+				}
+			switch((*value).itemSel){
+				case 0:
+					
+					break;
+				case 1:
+					(*value).CursorData=&((*value).Cursor);
+					switch(key){
+						  case KEYAPRESS:
+								(*value).Cursor+=0.1;
+								break;
+						  case KEYBPRESS:
+								(*value).Cursor-=0.1;
+								break;
+
+					}
+					break;
+				case 2:
+					
+					break;				
+		}
+			_isChange=1;
+	}
+}
+
+
+//--------------------------TOOL--------------------------
+
+
+
 
 
 //--------------------------SET-------------------------
@@ -200,9 +259,9 @@ char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
 					return (char *)_MENU_showData;
 			case 1:
 				if((*value).trigMode){
-					return "DOWN";
+					return "FALL";
 				}else{
-					return "UP";
+					return "RISE";
 				}
 			case 2:
 				sprintf(_MENU_showData,"%.2fms",10.0f/((*value).sampletime+1.0f));
@@ -219,6 +278,8 @@ void MENU_HANDLER_MAIN(volatile struct Oscilloscope *value,uint8_t key){
 			}
 			switch((*value).itemSel){
 				case 0:
+					
+					(*value).CursorData=&((*value).trigV);
 					switch(key){
 						  case KEYAPRESS:
 								(*value).trigV+=0.1;
@@ -226,6 +287,7 @@ void MENU_HANDLER_MAIN(volatile struct Oscilloscope *value,uint8_t key){
 						  case KEYBPRESS:
 								(*value).trigV-=0.1;
 								break;
+										
 					}
 					break;
 				case 1:
@@ -253,9 +315,9 @@ void MENU_HANDLER_MAIN(volatile struct Oscilloscope *value,uint8_t key){
 void drawMenu(volatile struct Oscilloscope *value){
 	if((_menuSel!=(*value).menuSel)){
 	TFT_Fill(MenuX1Position,0,MenuX2Position,16,YELLOW);
-	TFT_Fill(MenuX1Position,20,MenuX2Position,32,YELLOW);
-	TFT_Fill(MenuX1Position,56,MenuX2Position,68,YELLOW);
-	TFT_Fill(MenuX1Position,92,MenuX2Position,104,YELLOW);
+	TFT_Fill(MenuX1Position,20,MenuX2Position,32,PURPLE);
+	TFT_Fill(MenuX1Position,56,MenuX2Position,68,PURPLE);
+	TFT_Fill(MenuX1Position,92,MenuX2Position,104,PURPLE);
 	TFT_ShowString(110,0,(uint8_t *)MENU_OptionList[(*value).menuSel].String,BLACK,YELLOW,16,0);
 	TFT_ShowString(110,20,(uint8_t *)MENU_OptionList[(*value).menuSel].item[0],WHITE,PURPLE,12,0);
 	TFT_ShowString(110,56,(uint8_t *)MENU_OptionList[(*value).menuSel].item[1],WHITE,PURPLE,12,0);

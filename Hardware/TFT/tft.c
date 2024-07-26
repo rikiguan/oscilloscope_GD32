@@ -139,7 +139,7 @@ void Draw_Circle(uint16_t x0,uint16_t y0,uint8_t r,uint16_t color)
 	}
 }
 
-static uint16_t lastX=0,lastY=0;
+static uint16_t lastX=0,lastY=55;
 static uint8_t firstPoint = 1;
 
 /*
@@ -147,52 +147,47 @@ static uint8_t firstPoint = 1;
 *   函数参数：short int rawValue--Y轴参数值
 *   返回值：  无
 */
-void drawCurve(uint8_t yOffset,int rawValue)  
+void drawCurve(uint8_t yOffset,int rawValue,int cursor,uint8_t cursorDisplay)  
 {
-	int x=0,y=0,i=0;
+	int x=0,y=0,yc=0,i=0;
     
 
-	y = yOffset - rawValue;  	//data processing code
-	if((y > 80)){
-			y=80;
-	}
-	if(y < 30){
-			y=30;
-	}
+	y = yOffset - rawValue;
+	yc = yOffset -	cursor;
+	//data processing code
+//	if((y > 80)){
+//			y=80;
+//	}
+//	if(y < 30){
+//			y=30;
+//	}
     
-	if(firstPoint)//如果是第一次画点，则无需连线，直接描点即可
-	{
-		TFT_DrawPoint(0,y,GREEN);   
-		lastX=0;
-		lastY=y;
-		firstPoint=0; 
-	}
-	else
-	{
-		x=lastX+1;
-        
-		if(x<100)  //不超过屏幕宽度
-		{
+//	if(firstPoint)//如果是第一次画点，则无需连线，直接描点即可
+//	{
+//		TFT_DrawPoint(0,y,GREEN);   
+//		lastX=0;
+//		lastY=y;
+//		firstPoint=0; 
+//	}
+//	else
+//	{
+		  x=(lastX+1)%100;
+			if(x!=0){
 			TFT_DrawLine(lastX,lastY,x,y,GREEN);
+			}
 			TFT_Address_Set16(x+1,30,x+1,80);
 			for(i=30;i<=80;i++)
 			{
+				if(cursorDisplay && i==yc){
+					TFT_WR_DATA16(WHITE);
+				}else{
 					TFT_WR_DATA16(BLACK);
+				}
 			}	
 			lastX=x;
 			lastY=y;
-		}
-		else  //超出屏幕宽度，清屏，从第一个点开始绘制，实现动态更新效果
-		{        
-			for(i=30;i<=80;i++)
-			{
-					TFT_DrawPoint(1,i,BLACK);
-			}			
-			TFT_DrawPoint(0,y,GREEN);   
-			lastX=0;
-			lastY=y;
-		}
-  }
+		
+//  }
 }
 
 /*
@@ -510,7 +505,7 @@ void TFT_StaticUI(void)
     
 //char showData[32]={0};
     
-    TFT_ShowChinese(10,0,(uint8_t *)"简易示波器",BLACK,GREEN,16,0);
+    TFT_ShowChinese(10,3,(uint8_t *)"简易示波器",BLACK,GREEN,16,0);
     
 		
 		
@@ -579,19 +574,21 @@ void TFT_ShowUI(volatile const struct Oscilloscope *value)
 	}
 	
 
+	TFT_Fill(85,25,95,30,(*value).isTrig?GREEN:YELLOW);
 	
 }
 
 void TFT_ShowWelcomeUI()
 {	
-	TFT_Fill(0,0,160,128,BLACK);
+	TFT_ClearScreen();
 	TFT_DrawRectangle(4,48,156,80,PURPLE);
 	TFT_ShowString(8,52,(uint8_t *)"Oscilloscope",WHITE,PURPLE,24,0);
 	Draw_Circle(156,80,4,PURPLE);
-	
-	delay_ms(3000);
-	TFT_Fill(0,0,160,128,BLACK);
 }
 
+void TFT_ClearScreen()
+{	
+	TFT_Fill(0,0,160,128,BLACK);
+}
 
 

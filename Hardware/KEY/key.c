@@ -88,7 +88,7 @@ void Key_Handle(volatile struct Oscilloscope *value)
             (*value).pause=!(*value).pause;
 						break;
         case KEY2PRESS:
-            
+           (*value).CursorShow=!(*value).CursorShow;
 						break;
         case KEY3PRESS:
 						(*value).menuSel+=1;

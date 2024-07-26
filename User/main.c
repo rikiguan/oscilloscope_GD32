@@ -21,6 +21,8 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value);
 
 int main(void)
 {      
+		
+	
     uint16_t i=0;
     
     //中间值
@@ -28,8 +30,10 @@ int main(void)
     
     //峰峰值
     float voltage=0;
-    
-
+	
+	
+    float CursorTmp=0;
+		uint8_t CursorDisplay=0;
     //波形放大倍数
     float gainFactor=0;
 	
@@ -42,15 +46,15 @@ int main(void)
     
     //时钟初始化
     systick_config();
-    
-    //LED初始化
-    Init_LED_GPIO();
-    
+		
     //屏幕初始化
     TFT_Init();
-    
-    //填充白色
-    TFT_Fill(0,0,160,128,BLACK);
+		TFT_Fill(0,0,160,128,WHITE);
+		
+		TFT_ShowWelcomeUI();
+	
+    //LED初始化
+    Init_LED_GPIO();
     
     //初始化串口
     Init_USART(115200);
@@ -75,7 +79,9 @@ int main(void)
     //初始化频率定时器2
     Init_FreqTimer();
 		//waiting for 3s
-    TFT_ShowWelcomeUI();
+    delay_ms(3000);
+		
+		TFT_ClearScreen();
     //初始化静态UI
     TFT_StaticUI();
     while(1)
@@ -126,7 +132,7 @@ int main(void)
             //刷屏的同时获取电压值
             dma_transfer_number_config(DMA_CH0, 300);
             dma_channel_enable(DMA_CH0);
-            
+            oscilloscope.isTrig=0;
             //找到起始显示波形值
             for(i=0;i<200;i++)
             {
@@ -138,6 +144,7 @@ int main(void)
                         if(oscilloscope.voltageValue[i] > oscilloscope.trigV)
                         {
                             Trigger_number=i;
+														oscilloscope.isTrig=1;
                             break;
                         }
                     }
@@ -151,6 +158,7 @@ int main(void)
                         if(oscilloscope.voltageValue[i] < oscilloscope.trigV)
                         {
                             Trigger_number=i;
+														oscilloscope.isTrig=1;
                             break;
                         }
                     }
@@ -167,7 +175,9 @@ int main(void)
                 gainFactor = 40.0f/oscilloscope.vpp;
               
             }
-            
+						
+            CursorTmp=(*oscilloscope.CursorData-median)*gainFactor;
+						CursorDisplay=(CursorTmp<=50)&&(CursorTmp>=-50)&&oscilloscope.CursorShow;
             //依次显示后续100个数据，这样可以防止波形滚动
             for(i=Trigger_number;i<Trigger_number+100;i++)
             {
@@ -178,7 +188,7 @@ int main(void)
 							
 								if(oscilloscope.pause==1)break;
 							
-                drawCurve(55,voltage);
+                drawCurve(55,voltage,CursorTmp,CursorDisplay);
             }  
 						
 						 						
@@ -191,8 +201,9 @@ int main(void)
 					Open_LED(1);
 					CLose_LED(2);
 				}
+				
 				printf("frequence:%f\n",oscilloscope.gatherFreq);
-				printf("%d\n",timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0));
+				
         //参数显示UI
         TFT_ShowUI(&oscilloscope); 
         drawMenu(&oscilloscope); 
@@ -227,9 +238,9 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value)
 		(*value).pvpp        =0.0f; 
 		(*value).nvpp        =0.0f; 	
 		(*value).trigV        =1.0f; 	
+		(*value).Cursor = 0.0f;
+		(*value).CursorShow = 0;
+		(*value).CursorData = &((*value).trigV);
+		(*value).isTrig=0;
 }
 
-void Init_Menu()
-{
-	
-}
