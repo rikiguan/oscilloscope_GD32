@@ -13,12 +13,13 @@ MENU_OptionTypeDef MENU_OptionList[] ={
 {"MAIN",{"Trig","Mode","Base"},MENU_DISPLAY_MAIN,MENU_HANDLER_MAIN},
 {"TOOL",{"Vmax","Cursor","Vmin"},MENU_DISPLAY_TOOL,MENU_HANDLER_TOOL},
 {"PWM",{"Freq","Open","Duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
-{"SET",{"Dim","Adc","---"},MENU_DISPLAY_SET,MENU_HANDLER_SET}
+{"SET",{"Dim","Adc","Filter"},MENU_DISPLAY_SET,MENU_HANDLER_SET},
+{"FILTER",{"Avg","Med","---"},MENU_DISPLAY_FILTER,MENU_HANDLER_FILTER}
 };
 static char _MENU_showData[32]={0};
 uint8_t _isChange=0;
 uint8_t menuSize=ARRAY_SIZE(MENU_OptionList);
-
+uint8_t menuVisableSize=4;
 
 uint8_t _menuSel=99;
 uint8_t _itemSel=99;
@@ -43,6 +44,65 @@ void MENU_SEL_HANDLER(volatile struct Oscilloscope *value,uint8_t key){
 		
 }
 
+
+
+
+//--------------------------FILTER-------------------------
+
+char* MENU_DISPLAY_FILTER(volatile struct Oscilloscope *value,uint8_t item){
+	switch(item){
+			case 0:		
+				sprintf(_MENU_showData,"%d",(*value).AvgFilter);		
+				return (char *)_MENU_showData;
+			case 1:
+				sprintf(_MENU_showData,"%d",(*value).MedFilter);		
+				return (char *)_MENU_showData;
+			case 2:
+				
+			default: return "xxx";
+		}
+}
+
+
+void MENU_HANDLER_FILTER(volatile struct Oscilloscope *value,uint8_t key){
+			if((*value).isSel){
+				if(key == KEYDPRESS){
+					(*value).isSel=0;
+				}
+			switch((*value).itemSel){
+				case 0:
+					switch(key){
+						  case KEYAPRESS:
+								(*value).AvgFilter+=1;
+								break;
+						  case KEYBPRESS:
+								(*value).AvgFilter=(*value).AvgFilter?((*value).AvgFilter-1):0;
+								break;
+
+					}
+					break;
+				case 1:
+					(*value).CursorData=&((*value).Cursor);
+					switch(key){
+						  case KEYAPRESS:
+								(*value).MedFilter+=1;
+								break;
+						  case KEYBPRESS:
+								(*value).MedFilter=(*value).MedFilter?((*value).MedFilter-1):0;
+								break;
+
+					}
+					break;
+				case 2:
+					
+					break;				
+		}
+			_isChange=1;
+	}
+}
+
+
+//--------------------------FILTER--------------------------
 
 
 
@@ -113,7 +173,7 @@ char* MENU_DISPLAY_SET(volatile struct Oscilloscope *value,uint8_t item){
 				return (char *)_MENU_showData;
 
 			case 2:
-
+				return "ENTER";
 			default: return "xxx";
 		}
 }
@@ -150,7 +210,9 @@ void MENU_HANDLER_SET(volatile struct Oscilloscope *value,uint8_t key){
 					 adc_regular_channel_config(0, ADC_CHANNEL_3, (*value).adcMode);
 					break;
 				case 2:
-					
+						(*value).menuSel=4;
+						(*value).isSel=0;
+						(*value).itemSel=0;
 					break;				
 		}
 			_isChange=1;
@@ -264,7 +326,7 @@ char* MENU_DISPLAY_MAIN(volatile struct Oscilloscope *value,uint8_t item){
 					return "RISE";
 				}
 			case 2:
-				sprintf(_MENU_showData,"%.2fms",10.0f/((*value).sampletime+1.0f));
+				sprintf(_MENU_showData,"%dus",((*value).sampletime+1)*10);
 				return (char *)_MENU_showData;
 					
 			default: return "xxx";

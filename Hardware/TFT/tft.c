@@ -155,12 +155,12 @@ void drawCurve(uint8_t yOffset,int rawValue,int cursor,uint8_t cursorDisplay)
 	y = yOffset - rawValue;
 	yc = yOffset -	cursor;
 	//data processing code
-//	if((y > 80)){
-//			y=80;
-//	}
-//	if(y < 30){
-//			y=30;
-//	}
+	if((y > 80)){
+			y=80;
+	}
+	if(y < 30){
+			y=30;
+	}
     
 //	if(firstPoint)//如果是第一次画点，则无需连线，直接描点即可
 //	{

@@ -11,13 +11,18 @@
 #include "key.h"
 #include "freq.h"
 #include "main.h"
-
+#include "update.h"
 #include "menu.h"
 
 
 volatile struct Oscilloscope oscilloscope={0};
 
-void Init_Oscilloscope(volatile struct Oscilloscope *value);
+
+#define WINDOW_SIZE_MAIN 20
+volatile float captureValues1[WINDOW_SIZE_MAIN];
+uint8_t captureIndex1 = 0;
+
+
 
 int main(void)
 {      
@@ -98,7 +103,7 @@ int main(void)
 					  oscilloscope.pvpp=0;
 					  oscilloscope.nvpp=0;
 					
-						Opt_ADC_Value();
+						Opt_ADC_Value(oscilloscope.MedFilter,oscilloscope.AvgFilter);
             //×ª»»µçÑ¹Öµ
             for(i=0;i<300;i++)
             {
@@ -119,11 +124,9 @@ int main(void)
             }
 
 						
-						
-						
-						
-						
-            oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
+
+						avgFilterLazy_FLOAT((oscilloscope.pvpp-oscilloscope.nvpp), (float *)captureValues1,&captureIndex1, (float *)&(oscilloscope.vpp), WINDOW_SIZE_MAIN);
+            //oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
 						if(oscilloscope.vpp <= 0.3)//ignore <0.3
             {
                     oscilloscope.gatherFreq=0;
@@ -242,5 +245,7 @@ void Init_Oscilloscope(volatile struct Oscilloscope *value)
 		(*value).CursorShow = 0;
 		(*value).CursorData = &((*value).trigV);
 		(*value).isTrig=0;
+		(*value).AvgFilter=3;
+		(*value).MedFilter=5;
 }
 

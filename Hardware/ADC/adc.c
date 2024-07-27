@@ -5,12 +5,14 @@
 #define ADC_VALUE_NUM 300U
 
 uint16_t adc_value[ADC_VALUE_NUM];
-uint16_t filteredValues[ADC_VALUE_NUM];
-#define WindowSize 5
+uint16_t filtered1Values[ADC_VALUE_NUM];
+uint16_t filtered2Values[ADC_VALUE_NUM];
 
-void Opt_ADC_Value()
+
+void Opt_ADC_Value(uint8_t MedWindowSize,uint8_t AvgWindowSize)
 {
-    medianFilter(adc_value,filteredValues,ADC_VALUE_NUM,WindowSize);
+    medianFilter(adc_value,filtered1Values,ADC_VALUE_NUM,MedWindowSize);
+	  avgFilterArray(filtered1Values,filtered2Values,ADC_VALUE_NUM,AvgWindowSize);
 }
 
 
@@ -26,8 +28,8 @@ uint16_t Get_ADC_Value(uint16_t value)
     {
         value=0;
     }
-    returnValue=filteredValues[value];
-    filteredValues[value]=0;
+    returnValue=filtered2Values[value];
+    //filtered2Values[value]=0;
     return returnValue;
 }
 /*
@@ -134,43 +136,6 @@ void DMA_Channel0_IRQHandler(void)
 }
 
 void ADC_TRIG_TIMMER_Init(){
-//	//定时器通道输入参数结构体
-//    timer_oc_parameter_struct timer_ocinitpara;
-//    //定时器参数结构体
-//    timer_parameter_struct timer_initpara;
-//    rcu_periph_clock_enable(RCU_TIMER0);
-
-//    //复位定时器
-//    timer_deinit(TIMER0);
-//    
-//    //定时器参数初始化
-//    timer_struct_para_init(&timer_initpara);
-//    
-//    timer_initpara.prescaler         = 71;                  //预分频器参数1M
-//    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;  //边沿对齐
-//    timer_initpara.counterdirection  = TIMER_COUNTER_UP;    //向上计数
-//    timer_initpara.period            = 500;               //周期
-//    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;    //时钟分频
-//		timer_initpara.repetitioncounter = 0;								    //重装载值
-//    timer_init(TIMER0, &timer_initpara);                    //参数初始化
-//    
-//    //定时器通道输入参数初始化
-//    timer_channel_output_struct_para_init(&timer_ocinitpara);
-//    
-//		timer_ocinitpara.ocpolarity  = TIMER_OC_POLARITY_HIGH;
-//    timer_ocinitpara.outputstate = TIMER_CCX_ENABLE;
-//    timer_channel_output_config(TIMER0, TIMER_CH_0, &timer_ocinitpara);
-
-//	  //使能自动重装载
-//	  timer_auto_reload_shadow_enable(TIMER0);
-//	
-//		timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_0, 100);
-//    timer_channel_output_mode_config(TIMER0, TIMER_CH_0, TIMER_OC_MODE_PWM1);
-//    timer_channel_output_shadow_config(TIMER0, TIMER_CH_0, TIMER_OC_SHADOW_DISABLE);
-//		timer_primary_output_config(TIMER0, ENABLE);//important
-//    timer_enable(TIMER0);
-
-
 
 
 

@@ -77,7 +77,7 @@ extern MENU_OptionTypeDef MENU_OptionList[];
 *   函数参数：无
 *   返回值：  无
 */
-extern uint8_t menuSize;
+extern uint8_t menuVisableSize;
 void Key_Handle(volatile struct Oscilloscope *value)
 {
 	uint8_t i=0,j=0;
@@ -94,7 +94,7 @@ void Key_Handle(volatile struct Oscilloscope *value)
 						(*value).menuSel+=1;
 					  (*value).isSel=0;
 						(*value).itemSel=0;
-						if((*value).menuSel>=menuSize)(*value).menuSel=0;
+						if((*value).menuSel>=menuVisableSize)(*value).menuSel=0;
             break;
 				 case KEYDPRESS:
 					  if((*value).isSel!=0){

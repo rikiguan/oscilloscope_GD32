@@ -24,4 +24,6 @@ char* MENU_DISPLAY_SET(volatile struct Oscilloscope *value,uint8_t item);
 void MENU_HANDLER_SET(volatile struct Oscilloscope *value,uint8_t key);
 char* MENU_DISPLAY_TOOL(volatile struct Oscilloscope *value,uint8_t item);
 void MENU_HANDLER_TOOL(volatile struct Oscilloscope *value,uint8_t key);
+char* MENU_DISPLAY_FILTER(volatile struct Oscilloscope *value,uint8_t item);
+void MENU_HANDLER_FILTER(volatile struct Oscilloscope *value,uint8_t key);
 #endif
