@@ -23,6 +23,9 @@ volatile float captureValues1[WINDOW_SIZE_MAIN];
 uint8_t captureIndex1 = 0;
 
 
+volatile float captureValues11[WINDOW_SIZE_MAIN];
+uint8_t captureIndex11 = 0;
+
 
 int main(void)
 {      
@@ -126,7 +129,7 @@ int main(void)
 						
 
 						avgFilterLazy_FLOAT((oscilloscope.pvpp-oscilloscope.nvpp), (float *)captureValues1,&captureIndex1, (float *)&(oscilloscope.vpp), WINDOW_SIZE_MAIN);
-            //oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
+            oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
 						if(oscilloscope.vpp <= 0.3)//ignore <0.3
             {
                     oscilloscope.gatherFreq=0;
@@ -170,7 +173,8 @@ int main(void)
 							}
             }	
       			//获取中间值
-						median = oscilloscope.vpp / 2.0f+oscilloscope.nvpp;
+						//median = oscilloscope.vpp / 2.0f+oscilloscope.nvpp;
+						avgFilterLazy_FLOAT((oscilloscope.vpp / 2.0f+oscilloscope.nvpp), (float *)captureValues11,&captureIndex11, (float *)&(median), WINDOW_SIZE_MAIN);
             //如果幅值过小，会出现放大倍数过大导致波形显示异常的问题
             if(oscilloscope.vpp > 0.3)
             {

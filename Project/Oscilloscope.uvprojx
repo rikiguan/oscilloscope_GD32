@@ -409,6 +409,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\menu.c</FilePath>
             </File>
+            <File>
+              <FileName>PWMMeasure.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\PWMMeasure.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

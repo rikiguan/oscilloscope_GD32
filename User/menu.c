@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "key.h"
 #include "tft.h"
+#include "PWMMeasure.h"
 
 #define MenuX1Position 110
 #define MenuX2Position 160
@@ -14,7 +15,7 @@ MENU_OptionTypeDef MENU_OptionList[] ={
 {"TOOL",{"Vmax","Cursor","Vmin"},MENU_DISPLAY_TOOL,MENU_HANDLER_TOOL},
 {"PWM",{"Freq","Open","Duty"},MENU_DISPLAY_PWM,MENU_HANDLER_PWM},
 {"SET",{"Dim","Adc","Filter"},MENU_DISPLAY_SET,MENU_HANDLER_SET},
-{"FILTER",{"Avg","Med","---"},MENU_DISPLAY_FILTER,MENU_HANDLER_FILTER}
+{"FILTER",{"Avg","Med","(PWM)"},MENU_DISPLAY_FILTER,MENU_HANDLER_FILTER}
 };
 static char _MENU_showData[32]={0};
 uint8_t _isChange=0;
@@ -45,10 +46,8 @@ void MENU_SEL_HANDLER(volatile struct Oscilloscope *value,uint8_t key){
 }
 
 
-
-
 //--------------------------FILTER-------------------------
-
+extern uint8_t PWMMearueResult;;
 char* MENU_DISPLAY_FILTER(volatile struct Oscilloscope *value,uint8_t item){
 	switch(item){
 			case 0:		
@@ -59,6 +58,8 @@ char* MENU_DISPLAY_FILTER(volatile struct Oscilloscope *value,uint8_t item){
 				return (char *)_MENU_showData;
 			case 2:
 				
+				sprintf(_MENU_showData,"%d%%",PWMMearueResult);		
+				return (char *)_MENU_showData;
 			default: return "xxx";
 		}
 }
@@ -94,7 +95,8 @@ void MENU_HANDLER_FILTER(volatile struct Oscilloscope *value,uint8_t key){
 					}
 					break;
 				case 2:
-					
+					TFT_ShowString(1,55,(uint8_t *)"Measuring...",WHITE,BLACK,16,0);
+					PWMAnylzing(value);
 					break;				
 		}
 			_isChange=1;
