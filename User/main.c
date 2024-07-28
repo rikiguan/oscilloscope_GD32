@@ -130,11 +130,7 @@ int main(void)
 
 						avgFilterLazy_FLOAT((oscilloscope.pvpp-oscilloscope.nvpp), (float *)captureValues1,&captureIndex1, (float *)&(oscilloscope.vpp), WINDOW_SIZE_MAIN);
             oscilloscope.vpp=(oscilloscope.pvpp-oscilloscope.nvpp);
-						if(oscilloscope.vpp <= 0.3)//ignore <0.3
-            {
-                    oscilloscope.gatherFreq=0;
-						}
-						
+
             //刷屏的同时获取电压值
             dma_transfer_number_config(DMA_CH0, 300);
             dma_channel_enable(DMA_CH0);
@@ -209,8 +205,23 @@ int main(void)
 					CLose_LED(2);
 				}
 				
-				printf("frequence:%f\n",oscilloscope.gatherFreq);
+				if(oscilloscope.gatherFreq==0){
+					//if(((uint32_t)TIMER_PSC(TIMER2))!=0)
+					//timer_prescaler_config(TIMER2,0,0);
+				}else if(oscilloscope.gatherFreq<50){
+					if(((uint32_t)TIMER_PSC(TIMER2))!=7199)
+					timer_prescaler_config(TIMER2,7199,0);
+				}else if(oscilloscope.gatherFreq<20000){
+					if(((uint32_t)TIMER_PSC(TIMER2))!=71)
+					timer_prescaler_config(TIMER2,71,0);
+				}else{
+					if(((uint32_t)TIMER_PSC(TIMER2))!=0)
+					timer_prescaler_config(TIMER2,0,0);
+				}
 				
+				
+				printf("frequence:%f\n",oscilloscope.gatherFreq);
+				//printf("%d\n",((uint32_t)TIMER_PSC(TIMER2)+1));
         //参数显示UI
         TFT_ShowUI(&oscilloscope); 
         drawMenu(&oscilloscope); 
