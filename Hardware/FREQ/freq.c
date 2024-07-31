@@ -32,7 +32,7 @@ void Init_FreqTimer(void)
     //定时器参数初始化
     timer_struct_para_init(&timer_initpara);
     
-    timer_initpara.prescaler         = 71;                  //预分频器参数
+    timer_initpara.prescaler         = 0;                  //预分频器参数
     timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;  //边沿对齐
     timer_initpara.counterdirection  = TIMER_COUNTER_UP;    //向上计数
     timer_initpara.period            = 65535;               //周期
@@ -56,49 +56,56 @@ void Init_FreqTimer(void)
     
     //使能定时器通道中断
     timer_interrupt_enable(TIMER2,TIMER_INT_CH0);
+		timer_interrupt_enable(TIMER2, TIMER_INT_UP);
     
     //定时器中断使能
     timer_enable(TIMER2);
 }
 static __IO uint32_t Value = 0;
-static __IO uint16_t ccnumber = 0;
+static __IO uint8_t ccnumber = 0;
 static __IO uint32_t freq = 0;
+static __IO uint32_t freqPeriod = 0;
 static __IO uint16_t readvalue1 = 0, readvalue2 = 0;
 
 
 extern volatile struct Oscilloscope oscilloscope;
 
 
-#define TIMER_FREQUENCY 1000000U //(1 MHz)
+#define TIMER_FREQUENCY 72000000U //(1 MHz)
 
 
-#define WINDOW_SIZE 20
+#define WINDOW_SIZE 5
 volatile uint32_t captureValues[WINDOW_SIZE];
 uint8_t captureIndex = 0;
 uint32_t avgDiff=10000;
 void TIMER2_IRQHandler(void)
 {
-  if(SET == timer_interrupt_flag_get(TIMER2, TIMER_INT_FLAG_CH0))
+  if(timer_interrupt_flag_get(TIMER2, TIMER_INT_FLAG_CH0)!= RESET)
   {
       
       if(0 == ccnumber){
             // 读第一次通道0捕获值
             readvalue1 = timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0);
             ccnumber = 1;
+						freqPeriod=0;
         }else if(1 == ccnumber){
             // 读第2次通道0捕获值 
             readvalue2 = timer_channel_capture_value_register_read(TIMER2, TIMER_CH_0);
-            // 如果第二次捕获值大于第一次
-            if(readvalue2 > readvalue1){
-                Value = (readvalue2 - readvalue1); 
-            }else{
-                Value = ((0xFFFFU - readvalue1) + readvalue2); 
-            }				
-						avgFilterLazy(Value, (uint32_t *)captureValues, (uint8_t *)&captureIndex, (uint32_t *)&avgDiff, WINDOW_SIZE);
-            freq = TIMER_FREQUENCY / avgDiff;
-            oscilloscope.gatherFreq = freq;						
-            ccnumber = 0;
+						Value = ((0xFFFFU*freqPeriod - readvalue1) + readvalue2);
+						//printf("%d\n",Value);
+						
+						avgFilter(Value, (uint32_t *)captureValues, (uint8_t *)&captureIndex, (uint32_t *)&avgDiff, WINDOW_SIZE);
+						freq = TIMER_FREQUENCY/((uint32_t)TIMER_PSC(TIMER2)+1) / avgDiff;
+						//printf("%d\n",avgDiff);
+						//printf("%d\n",freq);
+						oscilloscope.gatherFreq = freq;						
+						ccnumber = 0;							
+									
         }
         timer_interrupt_flag_clear(TIMER2, TIMER_INT_FLAG_CH0);
   }
+	  if (timer_interrupt_flag_get(TIMER2, TIMER_INT_FLAG_UP) != RESET) {
+        timer_interrupt_flag_clear(TIMER2, TIMER_INT_FLAG_UP);
+        freqPeriod++;
+    }
 }
